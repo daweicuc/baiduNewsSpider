@@ -1,0 +1,72 @@
+http://news.baidu.com/ns?from=news&cl=2&bt=0&y0=2018&m0=11&d0=1&y1=2018&m1=11&d1=1&et=0&q1=%E5%A5%A5%E8%BF%90%E4%BC%9A&submit=%E7%99%BE%E5%BA%A6%E4%B8%80%E4%B8%8B&q3=&q4=&s=1&mt=24&lm=24&begin_date=2018-11-1&end_date=2018-11-1&tn=newsdy&ct1=0&ct=0&rn=20&q6=
+https://news.baidu.com/ns?word=title%3A%28%E5%A5%A5%E8%BF%90%E4%BC%9A%29&pn=100&cl=2&ct=0&tn=newstitledy&rn=50&ie=utf-8&bt=1541952000&et=1542556799
+https://news.baidu.com/ns?from=news&cl=2&bt=1541952000&y0=2018&m0=11&d0=12&y1=2018&m1=11&d1=18&et=1542556799&q1=%E5%A5%A5%E8%BF%90%E4%BC%9A&
+submit=%E7%99%BE%E5%BA%A6%E4%B8%80%E4%B8%8B&q3=&q4=&mt=0&lm=&s=2&begin_date=2018-11-12&end_date=2018-11-18&tn=newstitledy&ct=0&rn=50&q6=
+http://news.baidu.com/ns?from=news
+&cl=2&bt=0&y0=2018&m0=11&d0=1&y1=2018&m1=11&d1=1&et=0
+&q1=%E5%A5%A5%E8%BF%90%E4%BC%9A
+&submit=%E7%99%BE%E5%BA%A6%E4%B8%80%E4%B8%8B
+&q3=&q4=
+&s=1&mt=24&lm=24
+&begin_date=2018-11-1&end_date=2018-11-1
+&tn=newsdy&ct1=0&ct=0&rn=20&q6=
+分析url:
+固定部分：http://news.baidu.com/ns
+新闻搜索：?from=news
+&cl=2 ：   分别为1和2的时候，新闻的时间有差别，不明白是不是分别代表“发表日期”和“被百度收录的日期”，建议用2
+&bt=0  ：开始日期的秒数，如2012-04-12 的毫秒数是1334160000
+&y0=2018  ： 开始年
+&m0=11  ： 开始月
+&d0=1  ：开始日
+&y1=2018  ：结束年
+&m1=11：  结束月
+&d1=1：结束日
+&et=0  结束日期的秒数，注意是当天的23:59:59
+&q1=%E5%A5%A5%E8%BF%90%E4%BC%9A   ：包含以下全部的关键词
+&submit=%E7%99%BE%E5%BA%A6%E4%B8%80%E4%B8%8B  ：                 百度一下，按钮
+&q3=  包含以下任意一个关键词
+&q4=  不包含以下关键词
+&s=1&mt=24&lm=24：时间限制24小时内
+&begin_date=2018-11-1&end_date=2018-11-1   ：开始和结束日期
+&tn=newsdy   ：估计意思是搜索标签在新闻全文   newstitledy：在新闻标题
+&ct1=0
+&ct=0   ：ct=1 按焦点排序 ct=2 按时间排序 ct=0 按时间排序并且提示是否记住设置 默认和其他按焦点排序
+&rn=20： 每页显示的条数 10,20,50,100
+&q6=   ： 限定站点搜索
+
+
+
+1.通过匹配部分文本找到标签，然后再通过标签找所有文本
+http://bigwayseo.com/1990
+https://blog.csdn.net/leiguang55555/article/details/51959646
+2.https://www.jianshu.com/p/d43422081e4b
+
+
+编码问题
+
+        encode1=chardet.detect(html)["encoding"]
+        if encode1=="GB2312":
+            encode1="GBK"
+
+https://blog.csdn.net/chaowanghn/article/details/54581010
+
+加回滚操作
+
+
+'gbk' codec can't decode byte 0xb0 in position 321: illegal multibyte sequence
+max() arg is an empty sequence
+max() arg is an empty sequence
+'gbk' codec can't decode byte 0x9a in position 1194: illegal multibyte sequence
+'gbk' codec can't decode byte 0xaf in position 258: illegal multibyte sequence
+'gbk' codec can't decode byte 0x80 in position 70: illegal multibyte sequence
+list index out of range
+'gbk' codec can't decode byte 0xad in position 432: illegal multibyte sequence
+'gbk' codec can't decode byte 0xbf in position 2: illegal multibyte sequence
+
+
+算法文档
+https://wenku.baidu.com/view/2b5c9793daef5ef7ba0d3cb5.html
+
+
+
+需求-怎么实现的？-前端演示

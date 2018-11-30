@@ -1,0 +1,562 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>index1</title>
+    <!-- Bootstrap Styles-->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+    <!-- Morris Chart Styles-->
+    <link href="assets/js/morris/morris-0.4.3.min.css" rel="stylesheet" />
+    <!-- Custom Styles-->
+    <link href="assets/css/custom-styles.css" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <script src="assets/js/echarts.min-3.js"></script>
+    <script src="assets/js/chart.min.js"></script>
+    <script src="assets/js/vue.js"></script>
+    <script src="assets/js/vue_resource.js"></script>
+    <script src="assets/js/echarts.min-3.js"></script>
+
+    <!--设置自启动关键词和时间-->
+    <script>
+        //设置自启动时间
+        function set_time() {
+            var time1;
+            time1=prompt("请输入自启动的时间","请在此输入时间（0-23时）");
+            if(time1==null) alert("时间未设置！");
+            else
+            {
+                if(time1=="请在此输入时间（0-23时）") alert("时间未设置！");
+                else
+                {
+                    if(time1=="") alert("时间未设置！");
+                    else
+                    {
+                        alert("时间已设置成功！");
+                    }
+                }
+            }
+        }
+        //设置自启动关键词
+        function set_keyword() {
+            var keyword1;
+            keyword1=prompt("请输入自启动时要搜索的关键词","请在此输入关键词");
+            if(keyword1==null) alert("关键词未设置！");
+            else
+            {
+                if(keyword1=="请在此输入关键词") alert("关键词未设置！");
+                else
+                {
+                    if(keyword1=="") alert("关键词未设置！");
+                    else
+                    {
+                        alert("关键词已设置成功！");
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!--获取当前时间-->
+    <script>
+        //获取当前日期
+        function now_time() {
+            var date1=new Date();
+            year1=date1.getFullYear();
+            month1=date1.getMonth()+1;
+            day1=date1.getDate();
+            hour1=date1.getHours();
+            var showtime;
+            if(hour1>=9){
+                showtime=year1+"年"+month1+"月"+day1+"日"+"9点前24小时新闻";
+            }
+            else {
+                date1.setDate(date1.getDate()-1);
+                year2=date1.getFullYear();
+                month2=date1.getMonth()+1;
+                day2=date1.getDate();
+                showtime=year2+"年"+month2+"月"+day2+"日"+"9点前24小时新闻";
+            }
+
+            document.write(showtime)
+
+        }
+    </script>
+
+    <!--更改字体-->
+    <style type="text/css">
+        /*更改字体*/
+        div{
+             font-family:腾讯体,sans-serif
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div id="wrapper">
+
+        <!--1.最上面一条导航栏（包含系统名称、logo、转回首页的链接）-->
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index1.html"> <!--点击转回首页-->
+                    <strong>
+                        <img src="assets/img/u_logo.png" height="46" width="115" style="margin-top: -10px"/>
+                        新闻分析系统
+                    </strong>
+                </a>
+            </div>
+        </nav>
+
+        <!--2.下面操作部分-->
+        <div id="page-wrapper">
+
+            <div id="page-inner">
+
+<!--============================================最上面标题及设置部分=============================================-->
+                <div class="row">
+
+                    <!--最上面显示当天日期。如果当天时间没有到九点，则显示前一天9点自启动得到的新闻信息；
+                    如果超过九点，则显示当天自启动之后获取的新闻信息-->
+                    <h1 class="page-header" style="color:#000099;">
+                        <script>now_time()</script>
+                    </h1>
+
+                    <!--包括直接搜索、设置自启动时间关键词三个按钮-->
+                    <ol class="breadcrumb">
+                        <li>
+
+                            <a href="search.html" target="_blank" style="color: black">
+                               <button style="background-color: #9dd3fa;outline:none;height: 30px;width: 150px">关键词直接搜索</button>
+                            </a>&nbsp;&nbsp;&nbsp;
+
+                            <button onclick="set_time()" style="background-color: #9dd3fa;outline:none;height: 30px;width: 200px">设置默认自启动时间</button>&nbsp;&nbsp;&nbsp;
+
+                            <button onclick="set_keyword()" style="background-color: #9dd3fa;outline:none;height: 30px;width: 250px">设置默认自启动搜索关键词</button>
+
+                        </li>
+                    </ol>
+
+                </div>
+
+                <div class="tlinks">Collect from <a href="http://www.cssmoban.com/" >网页模板</a></div>
+<!--===========================================新闻列表================================================-->
+                <div class="row">
+
+                    <div class="panel panel-default">
+
+                        <div id="book_div">
+                            <button id="btn_book" @click="get_all_news()" style="background-color: #9dd3fa;outline:none;height: 30px;width: 150px;margin-left: 30px;margin-top: 30px">显示新闻信息</button>
+                        </div>
+
+
+                        <script type="text/javascript">
+                            //从后端获取新闻各项信息的方法函数
+                            new Vue({
+                                el: '#book_div',
+                                data: {
+                                    book_json: ''
+                                },
+                                methods: {
+                                    get_all_news: function () {
+                                        this.$http.get('/get_all_news').then(
+                                            function (value) {
+                                                new_json = value.body;
+                                                new_title_list = new_json.title;
+                                                new_from_list=new_json.from;
+                                                new_time_list=new_json.time;
+
+                                                for (var i = 0; i < new_title_list.length; i++) {
+                                                    document.getElementById("tbody1").innerHTML+='<tr><td>'+new_title_list[i]+'</td>'
+                                                        +'<td>'+new_from_list[i]+'</td>'+
+                                                        '<td>'+new_time_list[i]+ '</td>'+
+                                                        '<td><a href="/get_content?title=' + new_title_list[i] + '" target="_blank">正文</a></td></tr>';
+
+                                                }
+                                            }, function (reason) {
+                                                alert(reason.status);
+                                            }
+                                        );
+                                    }
+                                }
+                            })
+                        </script>
+
+                        <!--列表显示部分-->
+                        <div class="panel-body" style="height: 400px; overflow:scroll">
+                        <!--overflow:scroll代表超过原定高度之后滚动条出现-->
+                            <div style="border: 1px  #000000; width: 90%; margin: 0 auto;">
+                            <div class="table-responsive">
+                                <!--新闻列表的表格-->
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>序号</th>-->
+                                            <th>新闻标题</th>
+
+                                            <th>新闻来源网站</th>
+                                            <th>发稿时间</th>
+                                            <th>新闻正文</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody1">
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+<!--==========================================时间折线图====================================-->
+				<div class="row">
+                    <div class="panel panel-default">
+						<div class="panel-heading">
+							新闻发布时间分析
+						</div>
+
+						<div class="panel-body">
+                            <div id="time_div">
+                                <div id="main2" style="width: 900px;height:400px;"></div>
+                                <button id="btn_new2" @click="get_line1()" style="background-color: #9dd3fa;outline:none;height: 30px;width: 150px">显示折线图</button>
+                            </div>
+
+                            <script>
+                                //折线图方法函数
+                                function show() {
+                                    var myChart = echarts.init(document.getElementById('main2'));
+                                    option = {
+                                        title: {
+                                            left: 'center',
+                                            text: '新闻发布时间图'
+                                        },
+                                        tooltip: {},
+                                        legend: {
+                                            data: ['时间']
+                                        },
+                                        xAxis: {
+                                            type: 'category',
+                                            data: ["10-11点","11-12点","12-13点","13-14点","14-15点","15-16点",
+                                            "16-17点","17-18点","18-19点","19-20点","20-21点","21-22点","22-23点","23-24点",
+                                                "0-1点","1-2点","2-3点","3-4点","4-5点","5-6点","6-7点","7-8点","8-9点","9-10点"]
+                                        },
+                                        yAxis: {
+                                            type: 'value'
+                                        },
+                                        series: [{
+                                            name: '发布量',
+                                            data: this.new_num,
+                                            type: 'line'
+                                        }]
+                                    };
+                                    myChart.setOption(option);
+                                }
+
+                                new Vue({
+                                    el:'#time_div',
+                                    data:{new_num:''},
+                                    methods:{
+                                        get_line1 :function () {
+                                             this.$http.get('/get_line').then(function (value) {
+                                                var new_json=value.body;
+                                                this.new_num=new_json.new_num;
+                                                this.show();
+                                            },function (reason) {
+
+                                            });
+                                        },
+
+                                        show:show
+                                    }
+
+                                })
+                            </script>
+                        </div>
+						<!--</div>-->
+					</div>
+                </div>
+<!--=========================================来源饼图====================================-->
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            新闻来源分析
+                        </div>
+                        <div class="panel-body">
+                            <div id="main_from">
+                            <div id="main3" style="width: 600px;height:400px;"></div>
+                            <button id="b1" @click="showChart_f()" style="background-color: #9dd3fa;outline:none;height: 30px;width: 150px">显示来源饼状图</button>
+                           </div>
+                            <script type="text/javascript">
+                                 //来源饼图方法函数
+                                function show() {
+                                    var myChart = echarts.init(document.getElementById('main3'));
+                                    // 指定图表的配置项和数据
+                                     myChart.title = '环形图';
+                                     var option = {
+                                        tooltip: {
+                                            trigger: 'item',
+                                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                                        },
+                                        legend: {
+                                            orient: 'vertical',
+                                            x: 'left',
+                                            data:[this.top3_from_1[0],this.top3_from_1[1],this.top3_from_1[2],this.top3_from_1[3]]
+
+                                        },
+                                        series: [
+                                            {
+                                                name:'新闻来源',
+                                                type:'pie',
+                                                radius: ['50%', '70%'],
+                                                avoidLabelOverlap: false,
+                                                label: {
+                                                    normal: {
+                                                        show: false,
+                                                        position: 'center'
+                                                    },
+                                                    emphasis: {
+                                                        show: true,
+                                                        textStyle: {
+                                                            fontSize: '30',
+                                                            fontWeight: 'bold'
+                                                        }
+                                                    }
+                                                },
+                                                labelLine: {
+                                                    normal: {
+                                                        show: false
+                                                    }
+                                                },
+                                                data:[
+
+                                                    {value:this.top3_from_count[0],name:this.top3_from_1[0]},
+                                                    {value:this.top3_from_count[1],name:this.top3_from_1[1]},
+                                                    {value:this.top3_from_count[2],name:this.top3_from_1[2]},
+                                                    {value:this.top3_from_count[3],name:this.top3_from_1[3]}
+
+
+
+                                                ]
+                                            }
+                                        ]
+                                    };
+                                    // 使用刚指定的配置项和数据显示图表。
+                                    myChart.setOption(option);
+                                }
+
+                                    new Vue({
+                                        el:'#main_from',
+                                        data:{
+                                            top3_from_count:'',
+                                            top3_from_1:''
+                                        },
+                                        methods:{
+                                            showChart_f :function () {
+                                             this.$http.get('/get_pie').then(
+                                                 function (value) {
+                                                 var from_json=value.body;
+                                                 this.top3_from_count=from_json.count;
+                                                 this.top3_from_1= from_json.from;
+                                                 this.show();
+                                            },function (reason) { }
+                                            );
+                                            },
+                                            show:show
+                                        }
+                                    })
+
+                                </script>
+
+                         </div>
+                    </div>
+                </div>
+<!--===========================================联通占比====================================-->
+                <div class="row">
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading">
+                            “联通”所占比例
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div id="main_unicom">
+                                <div id="main_u" style="width: 600px;height:400px;"></div>
+                                <button id="b_u" @click="showChart_u()" style="background-color: #9dd3fa;outline:none;height: 30px;width: 150px">显示联通占比</button>
+                                <script type="text/javascript">
+                                //联通占比方法函数
+                                    function show() {
+                                    var myChart = echarts.init(document.getElementById('main_u'));
+                                    // 指定图表的配置项和数据
+                                     myChart.title = '环形图';
+                                     var option = {
+                                        tooltip: {
+                                            trigger: 'item',
+                                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                                        },
+                                        legend: {
+                                            orient: 'vertical',
+                                            x: 'left',
+                                            data:['有联通','无联通']
+                                        },
+                                        series: [
+                                            {
+                                                name:'占比',
+                                                type:'pie',
+                                                radius: ['50%', '70%'],
+                                                avoidLabelOverlap: false,
+                                                label: {
+                                                    normal: {
+                                                        show: false,
+                                                        position: 'center'
+                                                    },
+                                                    emphasis: {
+                                                        show: true,
+                                                        textStyle: {
+                                                            fontSize: '30',
+                                                            fontWeight: 'bold'
+                                                        }
+                                                    }
+                                                },
+                                                labelLine: {
+                                                    normal: {
+                                                        show: false
+                                                    }
+                                                },
+                                                data:[
+
+                                                    {value:this.unicom,name:'有联通'},
+                                                    {value:this.un_u,name:'无联通'}
+
+
+
+
+                                                ]
+                                            }
+                                        ]
+                                    };
+                                    // 使用刚指定的配置项和数据显示图表。
+                                    myChart.setOption(option);
+                                    }
+
+                                    new Vue({
+                                        el:'#main_unicom',
+                                        data:{
+                                            unicom:'',
+                                            un_u:''
+                                        },
+                                        methods:{
+                                            showChart_u :function () {
+                                             this.$http.get('/get_unicom').then(function (value) {
+                                                 var u_json=value.body;
+                                                 this.unicom=u_json.unicom;
+                                                 this.un_u=u_json.un_unicom;
+                                                 this.show();
+                                                },function (reason) {}
+                                                );
+                                            },
+
+                                            show:show
+                                        }
+                                    })
+
+                                </script>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+<!--=========================================词云图====================================-->
+                <div class="row">
+				<!--<div class="col-md-9 col-sm-12 col-xs-12">-->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+							新闻正文高频词云图
+						</div>
+                    <div class="panel-body">
+                        <div id="cloud_div">
+                            <div id="main_c">
+                                <!--<img src="result2.png" id="c_img" style='display:none'/>-->
+
+
+                                </div>
+                            <br/>
+                            <!--<button id="btn_c" @click="get_line1()">显示词云图</button>-->
+                            <!--<button id="btn_c" @click="show_cloud()">显示词云图</button>-->
+                            <button id="btu_c" onclick="show_cloud2()" style="background-color: #9dd3fa;outline:none;height: 30px;width: 150px">显示词云图</button>
+                            </div>
+
+                    </div>
+                    <script>
+                        function show_cloud2() {
+                            document.getElementById('main_c').innerHTML=
+                            '<img src="result2.png" id="c_img"/>'
+                            // console.log(11)
+                        }
+                        new Vue({
+        el:'#cloud_div',
+        // data:{new_num:''},
+        methods:{
+            show_cloud :function () {
+                 this.$http.get('/get_cloud').then(function (value) {
+                    show_cloud2();
+                },function (reason) {
+
+                });
+            }
+
+
+        }
+
+    })
+                    </script>
+
+                </div>
+
+
+					<!--</div>		-->
+				</div>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    <script src="assets/js/jquery-1.10.2.js"></script>
+    <!-- Bootstrap Js -->
+    <script src="assets/js/bootstrap.min.js"></script>
+	 
+    <!-- Metis Menu Js -->
+    <script src="assets/js/jquery.metisMenu.js"></script>
+    <!-- Morris Chart Js -->
+    <script src="assets/js/morris/raphael-2.1.0.min.js"></script>
+    <script src="assets/js/morris/morris.js"></script>
+	
+	
+	<script src="assets/js/easypiechart.js"></script>
+	<script src="assets/js/easypiechart-data.js"></script>
+	
+	 <script src="assets/js/Lightweight-Chart/jquery.chart.js"></script>
+	
+    <!-- Custom Js -->
+    <script src="assets/js/custom-scripts.js"></script>
+ 
+
+</body>
+
+</html>
